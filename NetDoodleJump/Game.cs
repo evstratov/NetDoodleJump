@@ -58,18 +58,20 @@ namespace NetDoodleJump
             Height = texture.Height;
 
         }
-        public void Jump()
+        public void Jump(int x_edge, int y_edge, int length)
         {
             isGravityOn = false;
             for (int i = 1; i <= 300; i++)
             {
+                if (Y == y_edge + 1 && ((Math.Abs(X - x_edge) < 40) || (Math.Abs((X + Width) - (x_edge + length)) < 40)))
+                    break;
                 Y--;
                 i++;
                 Thread.Sleep(2);
             }
             isGravityOn = true;  
         }
-        public  void Move(Keys key)
+        public void Move(Keys key)
         {
             StopMove = false;
             switch (key)
@@ -95,26 +97,16 @@ namespace NetDoodleJump
                     break;
             }
         }
-        public  async void Gravity(int x_edge, int y_edge, int length)
+        public void Gravity(int x_edge, int y_edge, int length)
         {
-            await Task.Run(()=>
-            { 
-                if (isGravityOn)
-                {
-                    isGravityOn = false;
-
-                    while(true)
-                    {
-                        if (Y + 2 * Height >= GameWindow.formHeight)
-                            break;
-                        if (Y + Height == y_edge && ((Math.Abs(X - x_edge) < 40) || (Math.Abs((X + Width) - (x_edge + length)) < 40)))
-                            break;
-                        Y++;
-                        Thread.Sleep(2);
-                    }
-                    isGravityOn = true;
-                }
-            });
+            for(int i = 0; i < 3; i++) 
+            {
+                if (Y + 2 * Height >= GameWindow.formHeight)
+                    return;
+                if (Y + Height == y_edge && ((Math.Abs(X - x_edge) < 40) || (Math.Abs((X + Width) - (x_edge + length)) < 40)))
+                    return;
+                Y++;
+            }
         }
     }
     public class Edge:Game
@@ -128,8 +120,8 @@ namespace NetDoodleJump
             Height = texture.Height;
         }
         public void Move()
-        {
-
+        { 
+            Y++;
         }
     }
 }

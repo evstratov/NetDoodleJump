@@ -47,12 +47,12 @@
             // timerPaint
             // 
             this.timerPaint.Interval = 15;
-            this.timerPaint.Tick += new System.EventHandler(this.timerPaint_Tick);
+            this.timerPaint.Tick += new System.EventHandler(this.TimerPaint_Tick);
             // 
             // timerGame
             // 
             this.timerGame.Interval = 10;
-            this.timerGame.Tick += new System.EventHandler(this.timerGame_Tick);
+            this.timerGame.Tick += new System.EventHandler(this.TimerGame_Tick);
             // 
             // GameWindow
             // 

@@ -8,3 +8,14 @@ C:\Users\evstratov\Documents\Visual Studio 2015\Projects\NetDoodleJump\NetDoodle
 C:\Users\evstratov\Documents\Visual Studio 2015\Projects\NetDoodleJump\NetDoodleJump\obj\Debug\NetDoodleJump.pdb
 C:\Users\evstratov\Documents\Visual Studio 2015\Projects\NetDoodleJump\NetDoodleJump\obj\Debug\NetDoodleJump.GameWindow.resources
 C:\Users\evstratov\Documents\Visual Studio 2015\Projects\NetDoodleJump\NetDoodleJump\obj\Debug\NetDoodleJump.Resources.resources
+D:\Projects\NetDoodleJump\NetDoodleJump\bin\Debug\NetDoodleJump.exe.config
+D:\Projects\NetDoodleJump\NetDoodleJump\bin\Debug\NetDoodleJump.exe
+D:\Projects\NetDoodleJump\NetDoodleJump\bin\Debug\NetDoodleJump.pdb
+D:\Projects\NetDoodleJump\NetDoodleJump\obj\Debug\NetDoodleJump.csprojAssemblyReference.cache
+D:\Projects\NetDoodleJump\NetDoodleJump\obj\Debug\NetDoodleJump.GameWindow.resources
+D:\Projects\NetDoodleJump\NetDoodleJump\obj\Debug\NetDoodleJump.Properties.Resources.resources
+D:\Projects\NetDoodleJump\NetDoodleJump\obj\Debug\NetDoodleJump.Resources.resources
+D:\Projects\NetDoodleJump\NetDoodleJump\obj\Debug\NetDoodleJump.csproj.GenerateResource.cache
+D:\Projects\NetDoodleJump\NetDoodleJump\obj\Debug\NetDoodleJump.csproj.CoreCompileInputs.cache
+D:\Projects\NetDoodleJump\NetDoodleJump\obj\Debug\NetDoodleJump.exe
+D:\Projects\NetDoodleJump\NetDoodleJump\obj\Debug\NetDoodleJump.pdb
