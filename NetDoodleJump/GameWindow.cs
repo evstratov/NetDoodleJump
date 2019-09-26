@@ -20,6 +20,7 @@ namespace NetDoodleJump
         public Edge[] edges;
         public bool lockJump = false;
         public bool lockMove = false;
+        Random rnd = new Random();
         public GameWindow()
         {
             InitializeComponent();
@@ -32,7 +33,9 @@ namespace NetDoodleJump
 
         private void btnStart_Click(object sender, EventArgs e)
         {
-            this.Controls.Clear();
+            //this.Controls.Clear();
+            btnStart.Enabled = false;
+            btnStart.Visible = false;
             timerPaint.Enabled = true;
             player = new Player(this.Width/2, 100);
             edges = CreateEdges();  //new Edge(this.Width / 2, 300);
@@ -42,17 +45,29 @@ namespace NetDoodleJump
         {
             Edge[] arr = new Edge[6];
             Edge edge;
-            Random rnd = new Random();
             int x = GameWindow.formWidth / 2;
             int y = GameWindow.formHeight / 2;
             for (int i = 0; i < 6; i++)
             {
                 edge = new Edge(x, y);
                 arr[i] = edge;
-                x = rnd.Next(x-100, x + 100);
-                y = y + 200;
+                if (x <= GameWindow.formWidth/2)
+                    x = rnd.Next(GameWindow.formWidth / 2, GameWindow.formWidth);
+                else
+                    x = rnd.Next(0, GameWindow.formWidth / 2);
+                y = y - 150;
             }
             return arr;
+        }
+
+        public Point GetNewPoint(int x, int y)
+        {
+            if (x <= GameWindow.formWidth / 2)
+                x = rnd.Next(GameWindow.formWidth / 2, GameWindow.formWidth);
+            else
+                x = rnd.Next(0, GameWindow.formWidth / 2);
+            y = 0 - Edge.Height;
+            return new Point(x, y);
         }
 
         private void GameWindow_Paint(object sender, PaintEventArgs e)
@@ -74,24 +89,28 @@ namespace NetDoodleJump
 
         private void TimerGame_Tick(object sender, EventArgs e)
         {
+            player.Gravity(edges, Edge.Width);
+
+            Point p;
             foreach (Edge edge in edges)
             {
-                player.Gravity(edge.X, edge.Y, edge.Width);
                 edge.Move();
+                if (edge.Y >= GameWindow.formHeight)
+                {
+                    p = GetNewPoint(edge.X, edge.Y);
+                    edge.X = p.X;
+                    edge.Y = p.Y;
+                }
             }
         }
 
         private async void GameWindow_KeyDown(object sender, KeyEventArgs e)
         {
-            if (player.isGravityOn)
-                lockJump = false;
-            if (e.KeyCode == Keys.Up && !lockJump)
+            if (e.KeyCode == Keys.Up && player.isGravityOn)
             {
-                lockJump = true;
                 await Task.Run(()=>
                 {
-                    foreach (Edge edge in edges)
-                        player.Jump(edge.X, edge.Y, edge.Width);
+                    player.Jump(edges, Edge.Width);
                 });
             } else if (!lockMove && (e.KeyCode == Keys.Right || e.KeyCode == Keys.Left))
             {

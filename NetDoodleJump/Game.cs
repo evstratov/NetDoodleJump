@@ -11,19 +11,7 @@ namespace NetDoodleJump
 {
     public class Game
     {
-        private int width, height;
         protected Bitmap texture;
-
-        public int Width
-        {
-            get { return width; }
-            protected set { width = value; }
-        }
-        public int Height
-        {
-            get { return height; }
-            protected set { height = value; }
-        }
 
         public int X
         {
@@ -38,16 +26,22 @@ namespace NetDoodleJump
             get;
             set;
         }
-
-
-        public virtual void Draw(Graphics graphics)
-        {
-            graphics.DrawImage(texture, new Rectangle(X, Y, Width, Height));
-        }
     }
 
     public class Player:Game
     {
+        private static int width, height;
+
+        public static int Width
+        {
+            get { return width; }
+            private set { width = value; }
+        }
+        public static int Height
+        {
+            get { return height; }
+            private set { height = value; }
+        }
         public bool isGravityOn = true;
         public Player (int x, int y)
         {
@@ -58,18 +52,18 @@ namespace NetDoodleJump
             Height = texture.Height;
 
         }
-        public void Jump(int x_edge, int y_edge, int length)
+        public void Jump(Edge[] edges, int length)
         {
             isGravityOn = false;
-            for (int i = 1; i <= 300; i++)
+            for (int i = 1; i <= 500; i++)
             {
-                if (Y == y_edge + 1 && ((Math.Abs(X - x_edge) < 40) || (Math.Abs((X + Width) - (x_edge + length)) < 40)))
+                if (IsStayOrHitOnEdge(edges, length, true))
                     break;
                 Y--;
                 i++;
-                Thread.Sleep(2);
+                Thread.Sleep(1);
             }
-            isGravityOn = true;  
+            //isGravityOn = true;
         }
         public void Move(Keys key)
         {
@@ -80,7 +74,7 @@ namespace NetDoodleJump
                     
                     do
                     {
-                        X += 1;
+                        X += 2;
                         Thread.Sleep(3);
                     } while (!StopMove && ((X + Width) < GameWindow.formWidth));
                     StopMove = false;
@@ -89,7 +83,7 @@ namespace NetDoodleJump
                 case Keys.Left:
                     do
                     {
-                        X -= 1;
+                        X -= 2;
                         Thread.Sleep(3);
                     } while (!StopMove && X > 0);
                     StopMove = false;
@@ -97,20 +91,58 @@ namespace NetDoodleJump
                     break;
             }
         }
-        public void Gravity(int x_edge, int y_edge, int length)
+        public void Gravity(Edge[] edges, int length)
         {
-            for(int i = 0; i < 3; i++) 
+            for (int i = 0; i < 6; i++)
             {
                 if (Y + 2 * Height >= GameWindow.formHeight)
+                {
+                    isGravityOn = true;
                     return;
-                if (Y + Height == y_edge && ((Math.Abs(X - x_edge) < 40) || (Math.Abs((X + Width) - (x_edge + length)) < 40)))
+                }
+                if (IsStayOrHitOnEdge(edges, length, false))
+                {
+                    isGravityOn = true;
                     return;
+                }
                 Y++;
             }
+        }
+        private bool IsStayOrHitOnEdge(Edge[] edges, int length, bool isJump)
+        {
+            foreach(Edge e in edges)
+            {
+                if (!isJump)
+                {
+                    if (Y + Height == e.Y && ((Math.Abs(X - e.X) < 40) || (Math.Abs((X + Width) - (e.X + length)) < 40)))
+                        return true;
+                } else
+                {
+                    if (Y == e.Y + 1 && ((Math.Abs(X - e.X) < 40) || (Math.Abs((X + Width) - (e.X + length)) < 40)))
+                        return true;
+                }
+            }
+            return false;
+        }
+        public void Draw(Graphics graphics)
+        {
+            graphics.DrawImage(texture, new Rectangle(X, Y, Width, Height));
         }
     }
     public class Edge:Game
     {
+        private static int width, height;
+
+        public static int Width
+        {
+            get { return width; }
+            private set { width = value; }
+        }
+        public static int Height
+        {
+            get { return height; }
+            private set { height = value; }
+        }
         public Edge(int x, int y)
         {
             X = x;
@@ -122,6 +154,10 @@ namespace NetDoodleJump
         public void Move()
         { 
             Y++;
+        }
+        public void Draw(Graphics graphics)
+        {
+            graphics.DrawImage(texture, new Rectangle(X, Y, Width, Height));
         }
     }
 }
