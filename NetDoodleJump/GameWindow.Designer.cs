@@ -75,6 +75,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Name = "GameWindow";
             this.Text = "Game";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.GameWindow_FormClosing);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.GameWindow_Paint);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.GameWindow_KeyDown);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.GameWindow_KeyUp);

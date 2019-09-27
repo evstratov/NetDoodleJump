@@ -31,6 +31,9 @@ namespace NetDoodleJump
     public class Player:Game
     {
         private static int width, height;
+        private int score = 0;
+
+        private LoggerClass logger;
 
         public static int Width
         {
@@ -42,9 +45,21 @@ namespace NetDoodleJump
             get { return height; }
             private set { height = value; }
         }
-        public bool isGravityOn = true;
-        public Player (int x, int y)
+        public int Score
         {
+            get { return score; }
+            private set { score = value; }
+        }
+        public bool IsGameOver
+        {
+            get; private set;
+        }
+        public bool isGravityOn = true;
+        public Player (LoggerClass logger, int x, int y)
+        {
+            this.logger = logger;
+            IsGameOver = false;
+            Score = 0;
             X = x;
             Y = y;
             texture = Resources.gamerTexture;
@@ -54,6 +69,7 @@ namespace NetDoodleJump
         }
         public void Jump(Edge[] edges, int length)
         {
+            logger.WriteLog($"{DateTime.Now.ToString("H.mm.ss.fff")} Начало прыжка");
             isGravityOn = false;
             for (int i = 1; i <= 500; i++)
             {
@@ -63,15 +79,16 @@ namespace NetDoodleJump
                 i++;
                 Thread.Sleep(1);
             }
+            logger.WriteLog($"{DateTime.Now.ToString("H.mm.ss.fff")} Конец прыжка");
             //isGravityOn = true;
         }
         public void Move(Keys key)
         {
+            logger.WriteLog($"{DateTime.Now.ToString("H.mm.ss.fff")} Начало движение вбок");
             StopMove = false;
             switch (key)
             {
                 case Keys.Right:
-                    
                     do
                     {
                         X += 2;
@@ -90,6 +107,7 @@ namespace NetDoodleJump
 
                     break;
             }
+            logger.WriteLog($"{DateTime.Now.ToString("H.mm.ss.fff")} Конец движения вбок");
         }
         public void Gravity(Edge[] edges, int length)
         {
@@ -98,6 +116,7 @@ namespace NetDoodleJump
                 if (Y + 2 * Height >= GameWindow.formHeight)
                 {
                     isGravityOn = true;
+                    IsGameOver = true;
                     return;
                 }
                 if (IsStayOrHitOnEdge(edges, length, false))
@@ -110,13 +129,22 @@ namespace NetDoodleJump
         }
         private bool IsStayOrHitOnEdge(Edge[] edges, int length, bool isJump)
         {
-            foreach(Edge e in edges)
+            // обработка столкновений с гранями , снизу для прыжка или сверху при падении
+            foreach (Edge e in edges)
             {
                 if (!isJump)
                 {
                     if (Y + Height == e.Y && ((Math.Abs(X - e.X) < 40) || (Math.Abs((X + Width) - (e.X + length)) < 40)))
+                    {
+                        if (!e.Counted)
+                        {
+                            e.Counted = true;
+                            Score++;
+                        }
                         return true;
-                } else
+                    }
+                }
+                else
                 {
                     if (Y == e.Y + 1 && ((Math.Abs(X - e.X) < 40) || (Math.Abs((X + Width) - (e.X + length)) < 40)))
                         return true;
@@ -131,6 +159,7 @@ namespace NetDoodleJump
     }
     public class Edge:Game
     {
+        public bool Counted { get; set; } 
         private static int width, height;
 
         public static int Width

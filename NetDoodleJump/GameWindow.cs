@@ -21,6 +21,7 @@ namespace NetDoodleJump
         public bool lockJump = false;
         public bool lockMove = false;
         Random rnd = new Random();
+        public LoggerClass logger;
         public GameWindow()
         {
             InitializeComponent();
@@ -29,20 +30,26 @@ namespace NetDoodleJump
                 ControlStyles.AllPaintingInWmPaint |
                 ControlStyles.UserPaint, true);
             UpdateStyles();
+            logger = new LoggerClass();
         }
 
         private void btnStart_Click(object sender, EventArgs e)
         {
+            
+            logger.WriteLog($"{DateTime.Now.ToString("H.mm.ss.fff")} Старт игры");
             //this.Controls.Clear();
             btnStart.Enabled = false;
             btnStart.Visible = false;
             timerPaint.Enabled = true;
-            player = new Player(this.Width/2, 100);
+            timerGame.Enabled = true;
+            player = new Player(logger, this.Width/2, 100);
             edges = CreateEdges();  //new Edge(this.Width / 2, 300);
+            
             
         }
         public Edge[] CreateEdges()
         {
+            logger.WriteLog($"{DateTime.Now.ToString("H.mm.ss.fff")} Создание граней");
             Edge[] arr = new Edge[6];
             Edge edge;
             int x = GameWindow.formWidth / 2;
@@ -50,11 +57,25 @@ namespace NetDoodleJump
             for (int i = 0; i < 6; i++)
             {
                 edge = new Edge(x, y);
+                edge.Counted = false;
                 arr[i] = edge;
-                if (x <= GameWindow.formWidth/2)
-                    x = rnd.Next(GameWindow.formWidth / 2, GameWindow.formWidth);
+                if (x >= GameWindow.formWidth/2)
+                {
+                    if (x - 300 > 0)
+                        x = rnd.Next(x - 300, x);
+                    else
+                        x = rnd.Next(0, x);
+                }
+                    //x = rnd.Next(GameWindow.formWidth / 2, GameWindow.formWidth - Edge.Width);
                 else
-                    x = rnd.Next(0, GameWindow.formWidth / 2);
+                {
+                    if (x + 300 < GameWindow.formWidth - Edge.Width)
+                        x = rnd.Next(x, x + 300);
+                    else
+                        x = rnd.Next(x, GameWindow.formWidth - Edge.Width);
+
+                }
+                    //x = rnd.Next(0, GameWindow.formWidth / 2);
                 y = y - 150;
             }
             return arr;
@@ -63,7 +84,7 @@ namespace NetDoodleJump
         public Point GetNewPoint(int x, int y)
         {
             if (x <= GameWindow.formWidth / 2)
-                x = rnd.Next(GameWindow.formWidth / 2, GameWindow.formWidth);
+                x = rnd.Next(GameWindow.formWidth / 2, GameWindow.formWidth - Edge.Width);
             else
                 x = rnd.Next(0, GameWindow.formWidth / 2);
             y = 0 - Edge.Height;
@@ -79,16 +100,33 @@ namespace NetDoodleJump
                 player.Draw(e.Graphics);
                 edges.ToList<Edge>().ForEach(p => p.Draw(e.Graphics));
                 timerGame.Enabled = true;
+            } else
+            {
+                e.Graphics.Clear(Color.White);
             }
         }
 
         private void TimerPaint_Tick(object sender, EventArgs e)
         {
+            label1.Text = $"Score: {player.Score}";
+            /*if (player.IsGameOver)
+            {
+                timerGame.Enabled = false;
+                timerPaint.Enabled = false;
+                MessageBox.Show("Игра окончена. Набрано: (" + player.Score + ") очков.");
+                label1.Text = $"Score: {0}";
+                btnStart.Visible = true;
+                btnStart.Enabled = true;
+                player = null;
+                edges = null;
+            }*/
             Refresh();
         }
 
         private void TimerGame_Tick(object sender, EventArgs e)
         {
+            if (player == null)
+                return;
             player.Gravity(edges, Edge.Width);
 
             Point p;
@@ -98,6 +136,7 @@ namespace NetDoodleJump
                 if (edge.Y >= GameWindow.formHeight)
                 {
                     p = GetNewPoint(edge.X, edge.Y);
+                    edge.Counted = false;
                     edge.X = p.X;
                     edge.Y = p.Y;
                 }
@@ -106,14 +145,18 @@ namespace NetDoodleJump
 
         private async void GameWindow_KeyDown(object sender, KeyEventArgs e)
         {
+            if (player == null)
+                return;
             if (e.KeyCode == Keys.Up && player.isGravityOn)
             {
+                logger.WriteLog($"{DateTime.Now.ToString("H.mm.ss.fff")} Нажата клавиша прыжка");
                 await Task.Run(()=>
                 {
                     player.Jump(edges, Edge.Width);
                 });
             } else if (!lockMove && (e.KeyCode == Keys.Right || e.KeyCode == Keys.Left))
             {
+                logger.WriteLog($"{DateTime.Now.ToString("H.mm.ss.fff")} Нажата клавиша вбок");
                 lockMove = true;
                 await Task.Run(() =>
                 {
@@ -124,11 +167,19 @@ namespace NetDoodleJump
 
         private void GameWindow_KeyUp(object sender, KeyEventArgs e)
         {
+            if (player == null)
+                return;
             if (e.KeyCode == Keys.Left || e.KeyCode == Keys.Right)
             {
+                logger.WriteLog($"{DateTime.Now.ToString("H.mm.ss.fff")} Клавиша движения вбок отпущена");
                 player.StopMove = true;
                 lockMove = false;
             }
+        }
+
+        private void GameWindow_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            logger.CloseLog();
         }
     }
 }
