@@ -59,23 +59,20 @@ namespace NetDoodleJump
                 edge = new Edge(x, y);
                 edge.Counted = false;
                 arr[i] = edge;
-                if (x >= GameWindow.formWidth/2)
+                if (x - Edge.Width > 100 && (GameWindow.formWidth - Edge.Width) - (x + Edge.Width) > 100)
                 {
-                    if (x - 300 > 0)
-                        x = rnd.Next(x - 300, x);
+                    if (rnd.Next(0,1) == 0)
+                        x = rnd.Next(0, x - Edge.Width);
                     else
-                        x = rnd.Next(0, x);
-                }
-                    //x = rnd.Next(GameWindow.formWidth / 2, GameWindow.formWidth - Edge.Width);
-                else
-                {
-                    if (x + 300 < GameWindow.formWidth - Edge.Width)
-                        x = rnd.Next(x, x + 300);
-                    else
-                        x = rnd.Next(x, GameWindow.formWidth - Edge.Width);
+                        x = rnd.Next(x + Edge.Width, GameWindow.formWidth - Edge.Width);
 
+                } else
+                {
+                    if (x  - Edge.Width > 100)
+                        x = rnd.Next(0, x - Edge.Width);
+                    else if ((GameWindow.formWidth - Edge.Width) - (x + Edge.Width) > 100)
+                        x = rnd.Next(x + Edge.Width, GameWindow.formWidth - Edge.Width);
                 }
-                    //x = rnd.Next(0, GameWindow.formWidth / 2);
                 y = y - 150;
             }
             return arr;
@@ -83,10 +80,21 @@ namespace NetDoodleJump
 
         public Point GetNewPoint(int x, int y)
         {
-            if (x <= GameWindow.formWidth / 2)
-                x = rnd.Next(GameWindow.formWidth / 2, GameWindow.formWidth - Edge.Width);
+            if (x - Edge.Width > 100 && (GameWindow.formWidth - Edge.Width) - (x + Edge.Width) > 100)
+            {
+                if (rnd.Next(0, 1) == 0)
+                    x = rnd.Next(0, x - Edge.Width);
+                else
+                    x = rnd.Next(x + Edge.Width, GameWindow.formWidth - Edge.Width);
+
+            }
             else
-                x = rnd.Next(0, GameWindow.formWidth / 2);
+            {
+                if (x - Edge.Width > 100)
+                    x = rnd.Next(0, x - Edge.Width);
+                else if ((GameWindow.formWidth - Edge.Width) - (x + Edge.Width) > 100)
+                    x = rnd.Next(x + Edge.Width, GameWindow.formWidth - Edge.Width);
+            }
             y = 0 - Edge.Height;
             return new Point(x, y);
         }
