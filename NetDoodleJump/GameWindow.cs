@@ -140,9 +140,11 @@ namespace NetDoodleJump
         {
             if (client != null)
             {
-                client.SendPlayerInfo();
+                object info = new object[] { player.X, player.Y, player.Score};
+                client.SendPlayerInfo(info, id);
             }
-            label1.Text = $"Score: {player.Score}";
+            lb_score1.Text = $"You score: {player.Score}";
+            lb_score2.Text = "Opponent score: ";
             /*if (player.IsGameOver)
             {
                 timerGame.Enabled = false;
@@ -219,7 +221,7 @@ namespace NetDoodleJump
 
         public void PlayerInfoCallback(object info)
         {
-            throw new NotImplementedException();
+            opponent.X = info;
         }
     }
 }
