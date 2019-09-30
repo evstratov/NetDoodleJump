@@ -1,0 +1,8 @@
+C:\Users\evstratov\Documents\Visual Studio 2015\Projects\NetDoodleJump\GameHost\bin\Debug\GameHost.exe.config
+C:\Users\evstratov\Documents\Visual Studio 2015\Projects\NetDoodleJump\GameHost\bin\Debug\GameHost.exe
+C:\Users\evstratov\Documents\Visual Studio 2015\Projects\NetDoodleJump\GameHost\bin\Debug\GameHost.pdb
+C:\Users\evstratov\Documents\Visual Studio 2015\Projects\NetDoodleJump\GameHost\bin\Debug\wcf_service.dll
+C:\Users\evstratov\Documents\Visual Studio 2015\Projects\NetDoodleJump\GameHost\bin\Debug\wcf_service.pdb
+C:\Users\evstratov\Documents\Visual Studio 2015\Projects\NetDoodleJump\GameHost\obj\Debug\GameHost.csprojResolveAssemblyReference.cache
+C:\Users\evstratov\Documents\Visual Studio 2015\Projects\NetDoodleJump\GameHost\obj\Debug\GameHost.exe
+C:\Users\evstratov\Documents\Visual Studio 2015\Projects\NetDoodleJump\GameHost\obj\Debug\GameHost.pdb
