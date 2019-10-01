@@ -32,7 +32,8 @@
             this.btnStart = new System.Windows.Forms.Button();
             this.timerPaint = new System.Windows.Forms.Timer(this.components);
             this.timerGame = new System.Windows.Forms.Timer(this.components);
-            this.label1 = new System.Windows.Forms.Label();
+            this.lb_score1 = new System.Windows.Forms.Label();
+            this.lb_score2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // btnStart
@@ -55,13 +56,21 @@
             this.timerGame.Interval = 10;
             this.timerGame.Tick += new System.EventHandler(this.TimerGame_Tick);
             // 
-            // label1
+            // lb_score1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(25, 22);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(0, 13);
-            this.label1.TabIndex = 1;
+            this.lb_score1.AutoSize = true;
+            this.lb_score1.Location = new System.Drawing.Point(25, 22);
+            this.lb_score1.Name = "lb_score1";
+            this.lb_score1.Size = new System.Drawing.Size(0, 13);
+            this.lb_score1.TabIndex = 1;
+            // 
+            // lb_score2
+            // 
+            this.lb_score2.AutoSize = true;
+            this.lb_score2.Location = new System.Drawing.Point(395, 22);
+            this.lb_score2.Name = "lb_score2";
+            this.lb_score2.Size = new System.Drawing.Size(0, 13);
+            this.lb_score2.TabIndex = 2;
             // 
             // GameWindow
             // 
@@ -69,7 +78,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(530, 658);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.lb_score2);
+            this.Controls.Add(this.lb_score1);
             this.Controls.Add(this.btnStart);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Name = "GameWindow";
@@ -88,7 +98,8 @@
         private System.Windows.Forms.Button btnStart;
         private System.Windows.Forms.Timer timerPaint;
         private System.Windows.Forms.Timer timerGame;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lb_score1;
+        private System.Windows.Forms.Label lb_score2;
     }
 }
 

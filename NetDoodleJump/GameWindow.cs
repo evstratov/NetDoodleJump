@@ -9,19 +9,23 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using NetDoodleJump.ServiceGame;
 
 namespace NetDoodleJump
 {
-    public partial class GameWindow : Form
+    public partial class GameWindow : Form, IServiceGameCallback
     {
         public static int formWidth;
         public static int formHeight;
+        public int id;
         public Player player;
         public Edge[] edges;
         public bool lockJump = false;
         public bool lockMove = false;
+        public bool isConnected = false;
         Random rnd = new Random();
         public LoggerClass logger;
+        public ServiceGameClient client;
         public GameWindow()
         {
             InitializeComponent();
@@ -33,9 +37,27 @@ namespace NetDoodleJump
             logger = new LoggerClass();
         }
 
+        public void ConnectPlayer()
+        {
+            if (!isConnected)
+            {
+                id = client.Connect(name:"");
+                isConnected = true;
+            }
+        }
+        public void DisconnectPlayer()
+        {
+            if (isConnected)
+            {
+                client.Disconnect(id: id);
+                isConnected = false;
+            }
+        }
+
         private void btnStart_Click(object sender, EventArgs e)
         {
-            
+            client = new ServiceGameClient(new System.ServiceModel.InstanceContext(this));
+            ConnectPlayer();
             logger.WriteLog($"{DateTime.Now.ToString("H.mm.ss.fff")} Старт игры");
             //this.Controls.Clear();
             btnStart.Enabled = false;
@@ -116,7 +138,13 @@ namespace NetDoodleJump
 
         private void TimerPaint_Tick(object sender, EventArgs e)
         {
-            label1.Text = $"Score: {player.Score}";
+            if (client != null)
+            {
+                object info = new object[] { player.X, player.Y, player.Score};
+                client.SendPlayerInfo(info, id);
+            }
+            lb_score1.Text = $"You score: {player.Score}";
+            lb_score2.Text = "Opponent score: ";
             /*if (player.IsGameOver)
             {
                 timerGame.Enabled = false;
@@ -187,7 +215,13 @@ namespace NetDoodleJump
 
         private void GameWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
+            DisconnectPlayer();
             logger.CloseLog();
+        }
+
+        public void PlayerInfoCallback(object info)
+        {
+            opponent.X = info;
         }
     }
 }
