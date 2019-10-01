@@ -19,6 +19,7 @@ namespace NetDoodleJump
         public static int formHeight;
         public int id;
         public Player player;
+        public Player opponent;
         public Edge[] edges;
         public bool lockJump = false;
         public bool lockMove = false;
@@ -54,20 +55,21 @@ namespace NetDoodleJump
             }
         }
 
-        private void btnStart_Click(object sender, EventArgs e)
+        private async void btnStart_Click(object sender, EventArgs e)
         {
             client = new ServiceGameClient(new System.ServiceModel.InstanceContext(this));
-            ConnectPlayer();
+            ConnectPlayer(); 
+            // ожидание второго игрока
+            await Task.Run(() =>{while (!client.StartGame()) { }});
+            player = new Player(logger, this.Width / 2, 100);
+            opponent = new Player(logger, this.Width / 2, 100);
+            edges = CreateEdges();
             logger.WriteLog($"{DateTime.Now.ToString("H.mm.ss.fff")} Старт игры");
             //this.Controls.Clear();
             btnStart.Enabled = false;
             btnStart.Visible = false;
             timerPaint.Enabled = true;
             timerGame.Enabled = true;
-            player = new Player(logger, this.Width/2, 100);
-            edges = CreateEdges();  //new Edge(this.Width / 2, 300);
-            
-            
         }
         public Edge[] CreateEdges()
         {
@@ -125,8 +127,9 @@ namespace NetDoodleJump
         {
             formWidth = this.Width;
             formHeight = this.Height;
-            if (player != null && edges != null)
+            if (opponent != null && player != null && edges != null)
             {
+                opponent.Draw(e.Graphics);
                 player.Draw(e.Graphics);
                 edges.ToList<Edge>().ForEach(p => p.Draw(e.Graphics));
                 timerGame.Enabled = true;
@@ -140,11 +143,11 @@ namespace NetDoodleJump
         {
             if (client != null)
             {
-                object info = new object[] { player.X, player.Y, player.Score};
+                object[] info = new object[] { player.X, player.Y, player.Score};
                 client.SendPlayerInfo(info, id);
             }
             lb_score1.Text = $"You score: {player.Score}";
-            lb_score2.Text = "Opponent score: ";
+            lb_score2.Text = $"Opponent score: {opponent.Score}";
             /*if (player.IsGameOver)
             {
                 timerGame.Enabled = false;
@@ -216,12 +219,31 @@ namespace NetDoodleJump
         private void GameWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
             DisconnectPlayer();
+            //GameOverCallback();
             logger.CloseLog();
         }
 
-        public void PlayerInfoCallback(object info)
+        public void PlayerInfoCallback(object[] info)
         {
-            opponent.X = info;
+            opponent.X = (int)info[0];
+            opponent.Y = (int)info[1];
+            opponent.Score = (int)info[2];
+        }
+        public void GameOverCallback()
+        {
+            timerGame.Enabled = false;
+            timerPaint.Enabled = false;
+            if (player.Score > opponent.Score)
+                MessageBox.Show("Вы выиграли! Набрано: (" + player.Score + ") очков.");
+            else
+                MessageBox.Show("Вы проиграли! До победы не хватило: (" + (opponent.Score - player.Score) + ") очков.");
+            lb_score1.Text = $"You score: {0}";
+            lb_score2.Text = $"Opponent score: {0}";
+            btnStart.Visible = true;
+            btnStart.Enabled = true;
+            player = null;
+            opponent = null;
+            edges = null;
         }
     }
 }

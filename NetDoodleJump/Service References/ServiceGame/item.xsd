@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:tns="http://tempuri.org/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://localhost:8301/?xsd=xsd2" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
   <xs:element name="Connect">
     <xs:complexType>
       <xs:sequence>
@@ -11,6 +12,18 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" name="ConnectResult" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="StartGame">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="StartGameResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="StartGameResult" type="xs:boolean" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -29,7 +42,7 @@
   <xs:element name="SendPlayerInfo">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" name="info" nillable="true" type="xs:anyType" />
+        <xs:element xmlns:q1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="info" nillable="true" type="q1:ArrayOfanyType" />
         <xs:element minOccurs="0" name="id" type="xs:int" />
       </xs:sequence>
     </xs:complexType>
@@ -37,8 +50,13 @@
   <xs:element name="PlayerInfoCallback">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" name="info" nillable="true" type="xs:anyType" />
+        <xs:element xmlns:q2="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="info" nillable="true" type="q2:ArrayOfanyType" />
       </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GameOverCallback">
+    <xs:complexType>
+      <xs:sequence />
     </xs:complexType>
   </xs:element>
 </xs:schema>

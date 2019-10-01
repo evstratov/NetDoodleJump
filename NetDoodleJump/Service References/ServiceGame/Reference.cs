@@ -21,6 +21,12 @@ namespace NetDoodleJump.ServiceGame {
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceGame/Connect", ReplyAction="http://tempuri.org/IServiceGame/ConnectResponse")]
         System.Threading.Tasks.Task<int> ConnectAsync(string name);
         
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceGame/StartGame", ReplyAction="http://tempuri.org/IServiceGame/StartGameResponse")]
+        bool StartGame();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceGame/StartGame", ReplyAction="http://tempuri.org/IServiceGame/StartGameResponse")]
+        System.Threading.Tasks.Task<bool> StartGameAsync();
+        
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceGame/Disconnect", ReplyAction="http://tempuri.org/IServiceGame/DisconnectResponse")]
         void Disconnect(int id);
         
@@ -28,17 +34,22 @@ namespace NetDoodleJump.ServiceGame {
         System.Threading.Tasks.Task DisconnectAsync(int id);
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IServiceGame/SendPlayerInfo")]
-        void SendPlayerInfo(object info, int id);
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(object[]))]
+        void SendPlayerInfo(object[] info, int id);
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IServiceGame/SendPlayerInfo")]
-        System.Threading.Tasks.Task SendPlayerInfoAsync(object info, int id);
+        System.Threading.Tasks.Task SendPlayerInfoAsync(object[] info, int id);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     public interface IServiceGameCallback {
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IServiceGame/PlayerInfoCallback")]
-        void PlayerInfoCallback(object info);
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(object[]))]
+        void PlayerInfoCallback(object[] info);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IServiceGame/GameOverCallback")]
+        void GameOverCallback();
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -77,6 +88,14 @@ namespace NetDoodleJump.ServiceGame {
             return base.Channel.ConnectAsync(name);
         }
         
+        public bool StartGame() {
+            return base.Channel.StartGame();
+        }
+        
+        public System.Threading.Tasks.Task<bool> StartGameAsync() {
+            return base.Channel.StartGameAsync();
+        }
+        
         public void Disconnect(int id) {
             base.Channel.Disconnect(id);
         }
@@ -85,11 +104,11 @@ namespace NetDoodleJump.ServiceGame {
             return base.Channel.DisconnectAsync(id);
         }
         
-        public void SendPlayerInfo(object info, int id) {
+        public void SendPlayerInfo(object[] info, int id) {
             base.Channel.SendPlayerInfo(info, id);
         }
         
-        public System.Threading.Tasks.Task SendPlayerInfoAsync(object info, int id) {
+        public System.Threading.Tasks.Task SendPlayerInfoAsync(object[] info, int id) {
             return base.Channel.SendPlayerInfoAsync(info, id);
         }
     }

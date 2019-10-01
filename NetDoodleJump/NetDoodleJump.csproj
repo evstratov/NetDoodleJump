@@ -99,6 +99,9 @@
     <None Include="Service References\ServiceGame\item1.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Service References\ServiceGame\item2.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Service References\ServiceGame\ServiceGame.wsdl" />
   </ItemGroup>
   <ItemGroup>
@@ -112,6 +115,12 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\wcf_service\wcf_service.csproj">
+      <Project>{cd4556bf-c002-4a99-9f8d-447b17b564de}</Project>
+      <Name>wcf_service</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadataStorage Include="Service References\ServiceGame\" />

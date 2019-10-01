@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,7 +13,6 @@ namespace NetDoodleJump
     public class Game
     {
         protected Bitmap texture;
-
         public int X
         {
             get; set;
@@ -27,7 +27,6 @@ namespace NetDoodleJump
             set;
         }
     }
-
     public class Player:Game
     {
         private static int width, height;
@@ -48,13 +47,14 @@ namespace NetDoodleJump
         public int Score
         {
             get { return score; }
-            private set { score = value; }
+            set { score = value; }
         }
         public bool IsGameOver
         {
             get; private set;
         }
         public bool isGravityOn = true;
+        
         public Player (LoggerClass logger, int x, int y)
         {
             this.logger = logger;

@@ -22,32 +22,45 @@ namespace wcf_service
                 operationContext = OperationContext.Current
             };
             nextID++;
-            // количество игроков = 2, начать игру
             players.Add(player);
             return player.ID;
         }
 
         public void Disconnect(int id)
         {
-            var player = players.FirstOrDefault(i => i.ID == id);
-            if (player != null)
+            //var player = players.FirstOrDefault(i => i.ID == id);
+            if (players.Count > 0)
             {
-                players.Remove(player);
+                foreach (var item in players)
+                {
+                    //if (item.ID != id)
+                        item.operationContext.GetCallbackChannel<IServerGameCallback>().GameOverCallback();
+                }
+                players.Clear();
+                //players.Remove(player);
                 // конец игры
             }
         }
 
-        public void SendPlayerInfo(object info, int id)
+        public void SendPlayerInfo(object[] info, int id)
         {
             foreach(var item in players)
             {
-                var player = players.FirstOrDefault(i => i.ID == id);
-                //if (player != null)
-                //{
-                   
-                //}
-                item.operationContext.GetCallbackChannel<IServerGameCallback>().PlayerInfoCallback(info);
+                //var player = players.FirstOrDefault(i => i.ID == id);
+                if (item.ID != id)
+                {
+                    item.operationContext.GetCallbackChannel<IServerGameCallback>().PlayerInfoCallback(info);
+                }
             }
+        }
+
+        public bool StartGame()
+        {
+            if(players.Count == 2)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

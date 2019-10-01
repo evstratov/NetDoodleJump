@@ -13,16 +13,20 @@ namespace wcf_service
     {
         [OperationContract]
         int Connect(string name);
+        [OperationContract]
+        bool StartGame();
 
         [OperationContract]
         void Disconnect(int id);
 
         [OperationContract(IsOneWay = true)]
-        void SendPlayerInfo(object info, int id);
+        void SendPlayerInfo(object[] info, int id);
     }
     public interface IServerGameCallback
     {
         [OperationContract(IsOneWay = true)]
-        void PlayerInfoCallback(object info);
+        void PlayerInfoCallback(object[] info);
+        [OperationContract(IsOneWay = true)]
+        void GameOverCallback();
     }
 }
