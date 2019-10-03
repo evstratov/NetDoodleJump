@@ -25,7 +25,7 @@ namespace NetDoodleJump
         public bool lockMove = false;
         public bool isConnected = false;
         Random rnd = new Random();
-        public LoggerClass logger;
+        public wcf_service.LoggerClass logger;
         public ServiceGameClient client;
         public GameWindow()
         {
@@ -35,14 +35,14 @@ namespace NetDoodleJump
                 ControlStyles.AllPaintingInWmPaint |
                 ControlStyles.UserPaint, true);
             UpdateStyles();
-            logger = new LoggerClass();
+            //logger = new wcf_service.LoggerClass();
         }
 
         public void ConnectPlayer()
         {
             if (!isConnected)
             {
-                id = client.Connect(name:"");
+                id = client.Connect("");
                 isConnected = true;
             }
         }
@@ -51,6 +51,7 @@ namespace NetDoodleJump
             if (isConnected)
             {
                 client.Disconnect(id: id);
+                client.Close();
                 isConnected = false;
             }
         }
@@ -64,7 +65,7 @@ namespace NetDoodleJump
             player = new Player(logger, this.Width / 2, 100);
             opponent = new Player(logger, this.Width / 2, 100);
             edges = CreateEdges();
-            logger.WriteLog($"{DateTime.Now.ToString("H.mm.ss.fff")} Старт игры");
+            //logger.WriteLog($"{DateTime.Now.ToString("H.mm.ss.fff")} Старт игры");
             //this.Controls.Clear();
             btnStart.Enabled = false;
             btnStart.Visible = false;
@@ -73,52 +74,36 @@ namespace NetDoodleJump
         }
         public Edge[] CreateEdges()
         {
-            logger.WriteLog($"{DateTime.Now.ToString("H.mm.ss.fff")} Создание граней");
-            Edge[] arr = new Edge[6];
-            Edge edge;
-            int x = GameWindow.formWidth / 2;
-            int y = GameWindow.formHeight / 2;
-            for (int i = 0; i < 6; i++)
-            {
-                edge = new Edge(x, y);
-                edge.Counted = false;
-                arr[i] = edge;
-                if (x - Edge.Width > 100 && (GameWindow.formWidth - Edge.Width) - (x + Edge.Width) > 100)
+            try {
+                //logger.WriteLog($"{DateTime.Now.ToString("H.mm.ss.fff")} Создание граней");
+                Edge[] arr = new Edge[6];
+                Edge edge;
+                int x = GameWindow.formWidth / 2;
+                int y = GameWindow.formHeight / 2;
+                for (int i = 0; i < 6; i++)
                 {
-                    if (rnd.Next(0,1) == 0)
-                        x = rnd.Next(0, x - Edge.Width);
-                    else
-                        x = rnd.Next(x + Edge.Width, GameWindow.formWidth - Edge.Width);
-
-                } else
-                {
-                    if (x  - Edge.Width > 100)
-                        x = rnd.Next(0, x - Edge.Width);
-                    else if ((GameWindow.formWidth - Edge.Width) - (x + Edge.Width) > 100)
-                        x = rnd.Next(x + Edge.Width, GameWindow.formWidth - Edge.Width);
+                    edge = new Edge(x, y);
+                    edge.Counted = false;
+                    arr[i] = edge;
+                    x =client.GetXcoordinate(id, x, GameWindow.formWidth, Edge.Width);
+                    y = y - 150;
                 }
-                y = y - 150;
+                return arr;
             }
-            return arr;
+            catch (Exception ex)
+            {
+
+            }
+            finally
+            {
+                //logger.CloseLog();
+            }
+            return null;
         }
 
         public Point GetNewPoint(int x, int y)
         {
-            if (x - Edge.Width > 100 && (GameWindow.formWidth - Edge.Width) - (x + Edge.Width) > 100)
-            {
-                if (rnd.Next(0, 1) == 0)
-                    x = rnd.Next(0, x - Edge.Width);
-                else
-                    x = rnd.Next(x + Edge.Width, GameWindow.formWidth - Edge.Width);
-
-            }
-            else
-            {
-                if (x - Edge.Width > 100)
-                    x = rnd.Next(0, x - Edge.Width);
-                else if ((GameWindow.formWidth - Edge.Width) - (x + Edge.Width) > 100)
-                    x = rnd.Next(x + Edge.Width, GameWindow.formWidth - Edge.Width);
-            }
+            x = client.GetXcoordinate(id, x, GameWindow.formWidth, Edge.Width);
             y = 0 - Edge.Height;
             return new Point(x, y);
         }
@@ -188,14 +173,14 @@ namespace NetDoodleJump
                 return;
             if (e.KeyCode == Keys.Up && player.isGravityOn)
             {
-                logger.WriteLog($"{DateTime.Now.ToString("H.mm.ss.fff")} Нажата клавиша прыжка");
+                //logger.WriteLog($"{DateTime.Now.ToString("H.mm.ss.fff")} Нажата клавиша прыжка");
                 await Task.Run(()=>
                 {
                     player.Jump(edges, Edge.Width);
                 });
             } else if (!lockMove && (e.KeyCode == Keys.Right || e.KeyCode == Keys.Left))
             {
-                logger.WriteLog($"{DateTime.Now.ToString("H.mm.ss.fff")} Нажата клавиша вбок");
+                //logger.WriteLog($"{DateTime.Now.ToString("H.mm.ss.fff")} Нажата клавиша вбок");
                 lockMove = true;
                 await Task.Run(() =>
                 {
@@ -210,7 +195,7 @@ namespace NetDoodleJump
                 return;
             if (e.KeyCode == Keys.Left || e.KeyCode == Keys.Right)
             {
-                logger.WriteLog($"{DateTime.Now.ToString("H.mm.ss.fff")} Клавиша движения вбок отпущена");
+                //logger.WriteLog($"{DateTime.Now.ToString("H.mm.ss.fff")} Клавиша движения вбок отпущена");
                 player.StopMove = true;
                 lockMove = false;
             }
@@ -220,7 +205,7 @@ namespace NetDoodleJump
         {
             DisconnectPlayer();
             //GameOverCallback();
-            logger.CloseLog();
+            //logger.CloseLog();
         }
 
         public void PlayerInfoCallback(object[] info)
@@ -245,5 +230,10 @@ namespace NetDoodleJump
             opponent = null;
             edges = null;
         }
+
+        //public void EdgeXCoordCallback(int x)
+        //{
+        //    x_callback = x;
+        //}
     }
 }

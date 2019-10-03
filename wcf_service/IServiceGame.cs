@@ -7,17 +7,18 @@ using System.Text;
 
 namespace wcf_service
 {
-    // NOTE: You can use the "Rename" command on the "Refactor" menu to change the interface name "IServiceGame" in both code and config file together.
-    [ServiceContract(CallbackContract = typeof(IServerGameCallback))]
+    [ServiceContract(SessionMode = SessionMode.Required, CallbackContract = typeof(IServerGameCallback))]
     public interface IServiceGame
     {
         [OperationContract]
-        int Connect(string name);
+        int Connect(string namer);
         [OperationContract]
         bool StartGame();
 
         [OperationContract]
         void Disconnect(int id);
+        [OperationContract]
+        int GetXcoordinate(int id, int x, int formWidth, int edgeWidth);
 
         [OperationContract(IsOneWay = true)]
         void SendPlayerInfo(object[] info, int id);
@@ -28,5 +29,7 @@ namespace wcf_service
         void PlayerInfoCallback(object[] info);
         [OperationContract(IsOneWay = true)]
         void GameOverCallback();
+        //[OperationContract(IsOneWay = true)]
+        //void EdgeXCoordCallback(int x);
     }
 }

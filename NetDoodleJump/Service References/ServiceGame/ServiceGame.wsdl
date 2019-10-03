@@ -54,6 +54,12 @@
   <wsdl:message name="IServiceGame_Disconnect_OutputMessage">
     <wsdl:part name="parameters" element="tns:DisconnectResponse" />
   </wsdl:message>
+  <wsdl:message name="IServiceGame_GetXcoordinate_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetXcoordinate" />
+  </wsdl:message>
+  <wsdl:message name="IServiceGame_GetXcoordinate_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetXcoordinateResponse" />
+  </wsdl:message>
   <wsdl:message name="IServiceGame_SendPlayerInfo_InputMessage">
     <wsdl:part name="parameters" element="tns:SendPlayerInfo" />
   </wsdl:message>
@@ -63,26 +69,30 @@
   <wsdl:message name="IServiceGame_GameOverCallback_OutputCallbackMessage">
     <wsdl:part name="parameters" element="tns:GameOverCallback" />
   </wsdl:message>
-  <wsdl:portType name="IServiceGame">
-    <wsdl:operation name="Connect">
+  <wsdl:portType msc:usingSession="true" name="IServiceGame">
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="Connect">
       <wsdl:input wsaw:Action="http://tempuri.org/IServiceGame/Connect" message="tns:IServiceGame_Connect_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IServiceGame/ConnectResponse" message="tns:IServiceGame_Connect_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation name="StartGame">
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="StartGame">
       <wsdl:input wsaw:Action="http://tempuri.org/IServiceGame/StartGame" message="tns:IServiceGame_StartGame_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IServiceGame/StartGameResponse" message="tns:IServiceGame_StartGame_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation name="Disconnect">
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="Disconnect">
       <wsdl:input wsaw:Action="http://tempuri.org/IServiceGame/Disconnect" message="tns:IServiceGame_Disconnect_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IServiceGame/DisconnectResponse" message="tns:IServiceGame_Disconnect_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation name="SendPlayerInfo">
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="GetXcoordinate">
+      <wsdl:input wsaw:Action="http://tempuri.org/IServiceGame/GetXcoordinate" message="tns:IServiceGame_GetXcoordinate_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IServiceGame/GetXcoordinateResponse" message="tns:IServiceGame_GetXcoordinate_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="SendPlayerInfo">
       <wsdl:input wsaw:Action="http://tempuri.org/IServiceGame/SendPlayerInfo" message="tns:IServiceGame_SendPlayerInfo_InputMessage" />
     </wsdl:operation>
-    <wsdl:operation name="PlayerInfoCallback">
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="PlayerInfoCallback">
       <wsdl:output wsaw:Action="http://tempuri.org/IServiceGame/PlayerInfoCallback" message="tns:IServiceGame_PlayerInfoCallback_OutputCallbackMessage" />
     </wsdl:operation>
-    <wsdl:operation name="GameOverCallback">
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="GameOverCallback">
       <wsdl:output wsaw:Action="http://tempuri.org/IServiceGame/GameOverCallback" message="tns:IServiceGame_GameOverCallback_OutputCallbackMessage" />
     </wsdl:operation>
   </wsdl:portType>
@@ -109,6 +119,15 @@
     </wsdl:operation>
     <wsdl:operation name="Disconnect">
       <soap12:operation soapAction="http://tempuri.org/IServiceGame/Disconnect" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetXcoordinate">
+      <soap12:operation soapAction="http://tempuri.org/IServiceGame/GetXcoordinate" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>

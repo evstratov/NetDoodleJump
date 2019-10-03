@@ -12,14 +12,14 @@ namespace NetDoodleJump.ServiceGame {
     
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ServiceGame.IServiceGame", CallbackContract=typeof(NetDoodleJump.ServiceGame.IServiceGameCallback))]
+    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ServiceGame.IServiceGame", CallbackContract=typeof(NetDoodleJump.ServiceGame.IServiceGameCallback), SessionMode=System.ServiceModel.SessionMode.Required)]
     public interface IServiceGame {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceGame/Connect", ReplyAction="http://tempuri.org/IServiceGame/ConnectResponse")]
-        int Connect(string name);
+        int Connect(string namer);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceGame/Connect", ReplyAction="http://tempuri.org/IServiceGame/ConnectResponse")]
-        System.Threading.Tasks.Task<int> ConnectAsync(string name);
+        System.Threading.Tasks.Task<int> ConnectAsync(string namer);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceGame/StartGame", ReplyAction="http://tempuri.org/IServiceGame/StartGameResponse")]
         bool StartGame();
@@ -32,6 +32,12 @@ namespace NetDoodleJump.ServiceGame {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceGame/Disconnect", ReplyAction="http://tempuri.org/IServiceGame/DisconnectResponse")]
         System.Threading.Tasks.Task DisconnectAsync(int id);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceGame/GetXcoordinate", ReplyAction="http://tempuri.org/IServiceGame/GetXcoordinateResponse")]
+        int GetXcoordinate(int id, int x, int formWidth, int edgeWidth);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceGame/GetXcoordinate", ReplyAction="http://tempuri.org/IServiceGame/GetXcoordinateResponse")]
+        System.Threading.Tasks.Task<int> GetXcoordinateAsync(int id, int x, int formWidth, int edgeWidth);
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IServiceGame/SendPlayerInfo")]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(object[]))]
@@ -80,12 +86,12 @@ namespace NetDoodleJump.ServiceGame {
                 base(callbackInstance, binding, remoteAddress) {
         }
         
-        public int Connect(string name) {
-            return base.Channel.Connect(name);
+        public int Connect(string namer) {
+            return base.Channel.Connect(namer);
         }
         
-        public System.Threading.Tasks.Task<int> ConnectAsync(string name) {
-            return base.Channel.ConnectAsync(name);
+        public System.Threading.Tasks.Task<int> ConnectAsync(string namer) {
+            return base.Channel.ConnectAsync(namer);
         }
         
         public bool StartGame() {
@@ -102,6 +108,14 @@ namespace NetDoodleJump.ServiceGame {
         
         public System.Threading.Tasks.Task DisconnectAsync(int id) {
             return base.Channel.DisconnectAsync(id);
+        }
+        
+        public int GetXcoordinate(int id, int x, int formWidth, int edgeWidth) {
+            return base.Channel.GetXcoordinate(id, x, formWidth, edgeWidth);
+        }
+        
+        public System.Threading.Tasks.Task<int> GetXcoordinateAsync(int id, int x, int formWidth, int edgeWidth) {
+            return base.Channel.GetXcoordinateAsync(id, x, formWidth, edgeWidth);
         }
         
         public void SendPlayerInfo(object[] info, int id) {
