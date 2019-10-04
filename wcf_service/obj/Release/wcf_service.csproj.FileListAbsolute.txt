@@ -1,0 +1,5 @@
+C:\Users\evstratov\Documents\Visual Studio 2015\Projects\NetDoodleJump\wcf_service\bin\Release\wcf_service.dll.config
+C:\Users\evstratov\Documents\Visual Studio 2015\Projects\NetDoodleJump\wcf_service\bin\Release\wcf_service.dll
+C:\Users\evstratov\Documents\Visual Studio 2015\Projects\NetDoodleJump\wcf_service\bin\Release\wcf_service.pdb
+C:\Users\evstratov\Documents\Visual Studio 2015\Projects\NetDoodleJump\wcf_service\obj\Release\wcf_service.dll
+C:\Users\evstratov\Documents\Visual Studio 2015\Projects\NetDoodleJump\wcf_service\obj\Release\wcf_service.pdb

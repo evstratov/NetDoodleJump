@@ -32,8 +32,6 @@ namespace NetDoodleJump
         private static int width, height;
         private int score = 0;
 
-        //private wcf_service.LoggerClass logger;
-
         public static int Width
         {
             get { return width; }
@@ -55,36 +53,29 @@ namespace NetDoodleJump
         }
         public bool isGravityOn = true;
         
-        public Player(wcf_service.LoggerClass logger, int x, int y)
+        public Player(int x, int y, Bitmap texture)
         {
-            //this.logger = logger;
             IsGameOver = false;
             Score = 0;
             X = x;
             Y = y;
-            texture = Resources.gamerTexture;
+            this.texture = texture;
             Width = texture.Width;
             Height = texture.Height;
 
         }
         public void Jump(Edge[] edges, int length)
         {
-            //logger.WriteLog($"{DateTime.Now.ToString("H.mm.ss.fff")} Начало прыжка");
             isGravityOn = false;
             for (int i = 1; i <= 500; i++)
             {
-                //if (IsStayOrHitOnEdge(edges, length, true))
-                //    break;
                 Y--;
                 i++;
                 Thread.Sleep(1);
             }
-            //logger.WriteLog($"{DateTime.Now.ToString("H.mm.ss.fff")} Конец прыжка");
-            //isGravityOn = true;
         }
         public void Move(Keys key)
         {
-            //logger.WriteLog($"{DateTime.Now.ToString("H.mm.ss.fff")} Начало движение вбок");
             StopMove = false;
             switch (key)
             {
@@ -107,7 +98,6 @@ namespace NetDoodleJump
 
                     break;
             }
-            //logger.WriteLog($"{DateTime.Now.ToString("H.mm.ss.fff")} Конец движения вбок");
         }
         public void Gravity(Edge[] edges, int length)
         {

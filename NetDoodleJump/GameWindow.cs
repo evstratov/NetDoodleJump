@@ -48,29 +48,47 @@ namespace NetDoodleJump
         }
         public void DisconnectPlayer()
         {
-            if (isConnected)
+            try
             {
-                client.Disconnect(id: id);
-                client.Close();
+                if (isConnected)
+                {
+                    timerPaint.Enabled = false;
+                    timerGame.Enabled = false;
+                    client.Disconnect(id: id);
+                    client.Close();
+                }
+            } catch
+            {
+                client.Abort();
+            }
+            finally
+            {
+                client = null;
                 isConnected = false;
             }
         }
 
         private async void btnStart_Click(object sender, EventArgs e)
         {
-            client = new ServiceGameClient(new System.ServiceModel.InstanceContext(this));
-            ConnectPlayer(); 
-            // ожидание второго игрока
-            await Task.Run(() =>{while (!client.StartGame()) { }});
-            player = new Player(logger, this.Width / 2, 100);
-            opponent = new Player(logger, this.Width / 2, 100);
-            edges = CreateEdges();
-            //logger.WriteLog($"{DateTime.Now.ToString("H.mm.ss.fff")} Старт игры");
-            //this.Controls.Clear();
-            btnStart.Enabled = false;
-            btnStart.Visible = false;
-            timerPaint.Enabled = true;
-            timerGame.Enabled = true;
+            try
+            {
+                client = new ServiceGameClient(new System.ServiceModel.InstanceContext(this));
+                ConnectPlayer();
+                // ожидание второго игрока
+                await Task.Run(() => { while (!client.StartGame()) { } });
+                player = new Player(this.Width / 2, 100, Resources.gamerTexture);
+                opponent = new Player(this.Width / 2, 100, Resources.opponentTexture);
+                edges = CreateEdges();
+                //logger.WriteLog($"{DateTime.Now.ToString("H.mm.ss.fff")} Старт игры");
+                //this.Controls.Clear();
+                btnStart.Enabled = false;
+                btnStart.Visible = false;
+                timerPaint.Enabled = true;
+                timerGame.Enabled = true;
+            } catch
+            {
+                DisconnectPlayer();
+            }
         }
         public Edge[] CreateEdges()
         {
@@ -85,24 +103,51 @@ namespace NetDoodleJump
                     edge = new Edge(x, y);
                     edge.Counted = false;
                     arr[i] = edge;
-                    x =client.GetXcoordinate(id, x, GameWindow.formWidth, Edge.Width);
+                    //if (x - Edge.Width > 100 && (formWidth - Edge.Width) - (x + Edge.Width) > 100)
+                    //{
+                    //    if (rnd.Next(0, 1) == 0)
+                    //        x = rnd.Next(0, x - Edge.Width);
+                    //    else
+                    //        x = rnd.Next(x + Edge.Width, formWidth - Edge.Width);
+
+                    //}
+                    //else
+                    //{
+                    //    if (x - Edge.Width > 100)
+                    //        x = rnd.Next(0, x - Edge.Width);
+                    //    else if ((formWidth - Edge.Width) - (x + Edge.Width) > 100)
+                    //        x = rnd.Next(x + Edge.Width, formWidth - Edge.Width);
+                    //}
+                    x = client.GetXcoordinate(id, x, GameWindow.formWidth, Edge.Width);
                     y = y - 150;
                 }
                 return arr;
             }
             catch (Exception ex)
             {
+                DisconnectPlayer();
+                return null;
+            }
 
-            }
-            finally
-            {
-                //logger.CloseLog();
-            }
-            return null;
         }
 
         public Point GetNewPoint(int x, int y)
         {
+            //if (x - Edge.Width > 100 && (formWidth - Edge.Width) - (x + Edge.Width) > 100)
+            //{
+            //    if (rnd.Next(0, 1) == 0)
+            //        x = rnd.Next(0, x - Edge.Width);
+            //    else
+            //        x = rnd.Next(x + Edge.Width, formWidth - Edge.Width);
+
+            //}
+            //else
+            //{
+            //    if (x - Edge.Width > 100)
+            //        x = rnd.Next(0, x - Edge.Width);
+            //    else if ((formWidth - Edge.Width) - (x + Edge.Width) > 100)
+            //        x = rnd.Next(x + Edge.Width, formWidth - Edge.Width);
+            //}
             x = client.GetXcoordinate(id, x, GameWindow.formWidth, Edge.Width);
             y = 0 - Edge.Height;
             return new Point(x, y);
@@ -126,66 +171,80 @@ namespace NetDoodleJump
 
         private void TimerPaint_Tick(object sender, EventArgs e)
         {
-            if (client != null)
+            try {
+                if (client != null)
+                {
+                    object[] info = new object[] { player.X, player.Y, player.Score };
+                    client.SendPlayerInfo(info, id);
+                }
+                lb_score1.Text = $"You score: {player.Score}";
+                lb_score2.Text = $"Opponent score: {opponent.Score}";
+                if (player.IsGameOver)
+                {
+                    DisconnectPlayer();
+                    MessageBox.Show("Поражение, вы разбились. Набрано: (" + player.Score + ") очков.");
+                    btnStart.Visible = true;
+                    btnStart.Enabled = true;
+                    player = null;
+                    opponent = null;
+                    edges = null;
+                }
+                Refresh();
+            } catch
             {
-                object[] info = new object[] { player.X, player.Y, player.Score};
-                client.SendPlayerInfo(info, id);
+                DisconnectPlayer();
             }
-            lb_score1.Text = $"You score: {player.Score}";
-            lb_score2.Text = $"Opponent score: {opponent.Score}";
-            /*if (player.IsGameOver)
-            {
-                timerGame.Enabled = false;
-                timerPaint.Enabled = false;
-                MessageBox.Show("Игра окончена. Набрано: (" + player.Score + ") очков.");
-                label1.Text = $"Score: {0}";
-                btnStart.Visible = true;
-                btnStart.Enabled = true;
-                player = null;
-                edges = null;
-            }*/
-            Refresh();
         }
 
         private void TimerGame_Tick(object sender, EventArgs e)
         {
-            if (player == null)
-                return;
-            player.Gravity(edges, Edge.Width);
+            try {
+                if (player == null)
+                    return;
+                player.Gravity(edges, Edge.Width);
 
-            Point p;
-            foreach (Edge edge in edges)
-            {
-                edge.Move();
-                if (edge.Y >= GameWindow.formHeight)
+                Point p;
+                foreach (Edge edge in edges)
                 {
-                    p = GetNewPoint(edge.X, edge.Y);
-                    edge.Counted = false;
-                    edge.X = p.X;
-                    edge.Y = p.Y;
+                    edge.Move();
+                    if (edge.Y >= GameWindow.formHeight)
+                    {
+                        p = GetNewPoint(edge.X, edge.Y);
+                        edge.Counted = false;
+                        edge.X = p.X;
+                        edge.Y = p.Y;
+                    }
                 }
+            } catch
+            {
+                DisconnectPlayer();
             }
         }
 
         private async void GameWindow_KeyDown(object sender, KeyEventArgs e)
         {
-            if (player == null)
-                return;
-            if (e.KeyCode == Keys.Up && player.isGravityOn)
-            {
-                //logger.WriteLog($"{DateTime.Now.ToString("H.mm.ss.fff")} Нажата клавиша прыжка");
-                await Task.Run(()=>
+            try {
+                if (player == null)
+                    return;
+                if (e.KeyCode == Keys.Up && player.isGravityOn)
                 {
-                    player.Jump(edges, Edge.Width);
-                });
-            } else if (!lockMove && (e.KeyCode == Keys.Right || e.KeyCode == Keys.Left))
-            {
-                //logger.WriteLog($"{DateTime.Now.ToString("H.mm.ss.fff")} Нажата клавиша вбок");
-                lockMove = true;
-                await Task.Run(() =>
+                    //logger.WriteLog($"{DateTime.Now.ToString("H.mm.ss.fff")} Нажата клавиша прыжка");
+                    await Task.Run(() =>
+                    {
+                        player.Jump(edges, Edge.Width);
+                    });
+                } else if (!lockMove && (e.KeyCode == Keys.Right || e.KeyCode == Keys.Left))
                 {
-                    player.Move(e.KeyCode);
-                });
+                    //logger.WriteLog($"{DateTime.Now.ToString("H.mm.ss.fff")} Нажата клавиша вбок");
+                    lockMove = true;
+                    await Task.Run(() =>
+                    {
+                        player.Move(e.KeyCode);
+                    });
+                }
+            }
+            catch {
+                DisconnectPlayer();
             }
         }
 
@@ -203,6 +262,7 @@ namespace NetDoodleJump
 
         private void GameWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
+
             DisconnectPlayer();
             //GameOverCallback();
             //logger.CloseLog();
@@ -210,25 +270,39 @@ namespace NetDoodleJump
 
         public void PlayerInfoCallback(object[] info)
         {
-            opponent.X = (int)info[0];
-            opponent.Y = (int)info[1];
-            opponent.Score = (int)info[2];
+            try
+            {
+                opponent.X = (int)info[0];
+                opponent.Y = (int)info[1];
+                opponent.Score = (int)info[2];
+            }
+            catch
+            {
+                DisconnectPlayer();
+            }
         }
         public void GameOverCallback()
         {
-            timerGame.Enabled = false;
-            timerPaint.Enabled = false;
-            if (player.Score > opponent.Score)
-                MessageBox.Show("Вы выиграли! Набрано: (" + player.Score + ") очков.");
-            else
-                MessageBox.Show("Вы проиграли! До победы не хватило: (" + (opponent.Score - player.Score) + ") очков.");
-            lb_score1.Text = $"You score: {0}";
-            lb_score2.Text = $"Opponent score: {0}";
-            btnStart.Visible = true;
-            btnStart.Enabled = true;
-            player = null;
-            opponent = null;
-            edges = null;
+            try {
+                timerGame.Enabled = false;
+                timerPaint.Enabled = false;
+                if (player.Score > opponent.Score)
+                    MessageBox.Show("Вы выиграли! Набрано: (" + player.Score + ") очков.");
+                else
+                    MessageBox.Show("Вы проиграли! До победы не хватило: (" + (opponent.Score - player.Score) + ") очков.");
+                //lb_score1.Text = $"You score: {0}";
+                //lb_score2.Text = $"Opponent score: {0}";
+                btnStart.Visible = true;
+                btnStart.Enabled = true;
+                player = null;
+                opponent = null;
+                edges = null;
+                Refresh();
+            }
+            catch
+            {
+                DisconnectPlayer();
+            }
         }
 
         //public void EdgeXCoordCallback(int x)

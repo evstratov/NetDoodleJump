@@ -16,10 +16,10 @@ namespace NetDoodleJump.ServiceGame {
     public interface IServiceGame {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceGame/Connect", ReplyAction="http://tempuri.org/IServiceGame/ConnectResponse")]
-        int Connect(string namer);
+        int Connect(string name);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceGame/Connect", ReplyAction="http://tempuri.org/IServiceGame/ConnectResponse")]
-        System.Threading.Tasks.Task<int> ConnectAsync(string namer);
+        System.Threading.Tasks.Task<int> ConnectAsync(string name);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceGame/StartGame", ReplyAction="http://tempuri.org/IServiceGame/StartGameResponse")]
         bool StartGame();
@@ -27,10 +27,10 @@ namespace NetDoodleJump.ServiceGame {
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceGame/StartGame", ReplyAction="http://tempuri.org/IServiceGame/StartGameResponse")]
         System.Threading.Tasks.Task<bool> StartGameAsync();
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceGame/Disconnect", ReplyAction="http://tempuri.org/IServiceGame/DisconnectResponse")]
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IServiceGame/Disconnect")]
         void Disconnect(int id);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceGame/Disconnect", ReplyAction="http://tempuri.org/IServiceGame/DisconnectResponse")]
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IServiceGame/Disconnect")]
         System.Threading.Tasks.Task DisconnectAsync(int id);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceGame/GetXcoordinate", ReplyAction="http://tempuri.org/IServiceGame/GetXcoordinateResponse")]
@@ -86,12 +86,12 @@ namespace NetDoodleJump.ServiceGame {
                 base(callbackInstance, binding, remoteAddress) {
         }
         
-        public int Connect(string namer) {
-            return base.Channel.Connect(namer);
+        public int Connect(string name) {
+            return base.Channel.Connect(name);
         }
         
-        public System.Threading.Tasks.Task<int> ConnectAsync(string namer) {
-            return base.Channel.ConnectAsync(namer);
+        public System.Threading.Tasks.Task<int> ConnectAsync(string name) {
+            return base.Channel.ConnectAsync(name);
         }
         
         public bool StartGame() {

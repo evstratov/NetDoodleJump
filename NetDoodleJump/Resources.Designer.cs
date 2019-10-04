@@ -79,5 +79,15 @@ namespace NetDoodleJump {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap opponentTexture {
+            get {
+                object obj = ResourceManager.GetObject("opponentTexture", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }

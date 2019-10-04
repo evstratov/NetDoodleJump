@@ -11,11 +11,11 @@ namespace wcf_service
     public interface IServiceGame
     {
         [OperationContract]
-        int Connect(string namer);
+        int Connect(string name);
         [OperationContract]
         bool StartGame();
 
-        [OperationContract]
+        [OperationContract(IsOneWay = true)]
         void Disconnect(int id);
         [OperationContract]
         int GetXcoordinate(int id, int x, int formWidth, int edgeWidth);
